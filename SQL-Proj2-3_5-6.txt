@@ -1,0 +1,16 @@
+5.	Each transaction should have a user friendly interface to enter the information needed by the transaction. This can either be a Web-based interface, a command line interface, or a forms interface.
+
+CALL AddCustomer('I',611000002,'D','Allicock','214-583-4002', '');
+CALL AddCustomer('C', 0, '', '', '469-335-6002', 'Hitachi');
+
+Add new car with an existing owner
+INSERT INTO car VALUES(1024,'Ford',2018,'SUV',105);
+Add new car with new owner
+CALL AddOwner('B',0,'','ViewPoint Bank','Grand Prairie, TX','792-111-2222',124);
+
+
+
+6.	Test your transactions by adding a few new customers, cars, reservations, by changing some rental rates and reservations rates.
+
+TESTED WORKING 100%... 
+

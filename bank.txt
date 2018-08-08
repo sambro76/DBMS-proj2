@@ -1,0 +1,8 @@
+'Chase','Dallas, TX','692-552-6982',106
+'Bank of America','Richardson, TX','692-552-6983',107
+'PROSPERITY BANK','Plano, TX','692-552-6984',108
+'Capital One','Austin, TX','692-552-6985',109
+'Bank of Texas','Houston, TX','692-552-6986',110
+'Wells Fargo','Irving, TX','457-666-0012',118
+'Chase','Forth-Worth, TX','464-009-6064',116
+'COMERICA BANK','Rockwall, TX','663-564-7732',117

@@ -1,0 +1,105 @@
+4.	Write the following database update transactions using either PRO*C or JAVA/JDBC or PHP or some other programming language or scripting language.
+4.1	The first transaction is to add information about a new CUSTOMER
+
+/*CREATE PROCEDURE AddCustomer*/
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddCustomer`(IN `custType` CHAR(1), IN `SSN` INT(9), IN `Init` CHAR(1), IN `Lname` VARCHAR(15), IN `Phone` VARCHAR(12), IN `CName` VARCHAR(20))
+    DETERMINISTIC
+BEGIN
+SET @sql=CONCAT("INSERT INTO customer values(0,'",CustType,"')");
+prepare stmt FROM @sql;
+execute stmt;
+deallocate prepare stmt;
+
+SET @getCID="(SELECT MAX(CustID) FROM customer) ";
+SET @sql='';
+IF custType='I' THEN 
+	SET @sql=CONCAT(@sql,"INSERT INTO individual values(",SSN,",'",Init,"','",Lname,"','",Phone,"',",@getCID," )");
+ELSE 
+	SET @sql=CONCAT(@sql,"INSERT INTO company values(","'",CName,"','",Phone,"',",@getCID," )");
+END IF;
+
+prepare stmt FROM @sql;
+execute stmt;
+deallocate prepare stmt;
+END$$
+DELIMITER ;
+
+CALL AddCustomer('I',611000001,'J','Smith','214-583-4001', '');
+CALL AddCustomer('C', 0, '', '', '469-335-6001', 'Fujitsu');
+
+
+4.2	The second transaction is to add all the information about a new CAR
+
+When adding new car information, the car is required to have an OwnerID/Information (Rental_Company, Bank, or Person) ready.
+Here are the steps:
+1.1: if ownerID/info exists in Owner relation, add car information to tie car with ownerID/info
+     INSERT INTO car VALUES(1023,'Subaru',2016,'SUV',120);
+
+1.2: if ownerID/info not exist in Owner relation, 
+      add owner information, then add car information to tie car with ownerID/info.
+
+/*CREATE PROCEDURE to add new owner*/
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AddOwner`(IN `ownerType` CHAR(1), IN `SSN` INT(9), IN `Init` CHAR(1), IN `name` VARCHAR(15), IN `address` VARCHAR(30), IN `phone` VARCHAR(12), IN `ownerID` INT)
+    DETERMINISTIC
+BEGIN
+SET @sql='';
+SET @sql=CONCAT(@sql, "INSERT INTO owner values(", ownerID, ",'", ownerType,"' )");
+prepare stmt FROM @sql;
+execute stmt;
+deallocate prepare stmt;
+
+SET @sql='';
+IF ownerType='P' THEN 
+	SET @sql=CONCAT(@sql, "INSERT INTO person values(", SSN,",'",Init,"','", name, "','", Phone, "',", ownerID," )");
+ELSEIF ownerType='B' THEN
+	SET @sql=CONCAT(@sql,"INSERT INTO bank values(","'",name,"','",address,"','",Phone,"',",ownerID," )");
+ELSE 
+	SET @sql=CONCAT(@sql,"INSERT INTO rental_company values(","'",name,"','",address,"','",Phone,"',",ownerID," )");
+END IF;
+
+prepare stmt FROM @sql;
+execute stmt;
+deallocate prepare stmt;
+END$$
+DELIMITER ;
+
+
+CALL AddOwner('P',600335555,'A','Johnny','','792-158-1582',121);
+CALL AddOwner('B',0,'','CAPITAL','Denton, TX','792-111-1111',122);
+CALL AddOwner('C',0,'','FrysElectronic','Denton, TX','792-111-2222',123);
+
+
+
+
+4.3	The third transaction is to add all the information about a new RENTAL reservation (this must find a free car of the appropriate type for the rental period).
+
+/*List all available and scheduled cars for new reservation*/
+SELECT VehicleID,Type,StartDate,ReturnDate,Deposit,Availability from tmpReport;
+
+/*Add information about new reservation*/
+INSERT INTO `rent`(`StartDate`, `No_Days`, `No_Weeks`, `Rent_Option`, `Deposit`, `VehicleID`, `CustID`, `Status`, `AmountPaid`) VALUES ('2018/05/01',6,0,'DAILY',50,1001,15,'',0);
+
+/*View the completed reservation. Here vehicleID & startDate is the candidate key. Both form a unique constraint*/
+SELECT * FROM rent WHERE vehicleID=1001 and startDate='2018/05/01';
+
+
+4.4	The fourth transaction is to handle the return of a rented car. This transaction should print the total customer payment due for the rental, and enter it in the database.
+
+/*Retrieve vehicle information of the return car using key(VehicleID, StartDate)*/
+SELECT * FROM (
+	SELECT rent.VehicleID, car.Type, car.Model, Rent_Option, No_Weeks, No_Days, Deposit, StartDate, DATE_ADD(StartDate, INTERVAL No_weeks*7+No_Days DAY) as ReturnDate, Status, (D_Rate*No_Days+W_Rate*No_Weeks-Deposit) AS AmountDue, AmountPaid, customer.CustID as CustomerID 
+	FROM customer, rent, car, category
+	WHERE customer.CustID=Rent.CustID and rent.VehicleID=car.VehicleID and car.type=category.Type) as tmpInfo
+WHERE VehicleID=1001 and StartDate='2018-03-23';
+
+/*UPDATE Transaction status and/or AmountPaid by customer*/
+UPDATE `rent` SET `Status`='CU',`AmountPaid`=0 
+WHERE `VehicleID`=1001 AND StartDate='2018-03-23';
+
+
+4.5	The fifth transaction is to enter or update the rental rates (daily and weekly) for a type of car.
+UPDATE category SET D_Rate=21,W_Rate=126 WHERE TYPE='COMPACT';
+

@@ -1,0 +1,68 @@
+2.	Write queries to retrieve and print all the data you entered. Try to print the data so that it is easy to understand (for example, print appropriate headings, such as: Customers, Compact Cars, SUVs, Current Rentals, etc.).
+
+/*Show all car information and their corresponding Daily and Weekly Rate*/
+SELECT VehicleID, Model, Year, car.Type, D_Rate as Daily_Rate, W_Rate as Weekly_Rate 
+FROM car, category
+where car.type = category.type
+ORDER by VehicleID;
+
+
+/*Show all Rental Companies*/
+SELECT owner.OwnerID, OwnerType, RCName AS Company, RCAddress AS Address, Phone 
+FROM owner, rental_company
+WHERE owner.OwnerID=rental_company.OwnerID;
+
+/*Show all bank type owners*/
+SELECT owner.OwnerID, OwnerType, BName AS Name, BAddress AS Address, Phone 
+FROM owner, bank
+WHERE owner.OwnerID=bank.OwnerID;
+
+/*Show all person type owners*/
+SELECT owner.OwnerID, OwnerType,SSN,Init as FirstInitial,LName as LastName,Phone 
+FROM owner, person
+WHERE owner.OwnerID=person.OwnerID;
+
+
+/*List all cars owned by all owners*/
+SELECT VehicleID, Model, Year, Type, OwnerID, OwnerType
+From car,owner
+WHERE OID=OwnerID;
+
+/*Show all customers. Note:'I' is Individual; 'C' is Company*/
+SELECT customer.CustID as CustomerID, CustType as CustomerType
+FROM customer;
+
+/*Show all individual type customers*/
+SELECT customer.CustID as CustomerID, CustType as CustomerType, SSN, Init as FirstInitial, LName as LastName, Phone 
+FROM customer, individual
+WHERE customer.custID=individual.CID;
+
+/*Show all company type customers*/
+SELECT customer.CustID as CustomerID, CustType as CustomerType, CName as Company, Phone 
+FROM customer, company
+WHERE customer.custID=company.CID;
+
+
+/*List all customers who have rented the cars*/
+SELECT customer.CustID as CustomerID, CustType as CustomerType, StartDate, Rent_Option, Deposit, No_Weeks, No_Days, VehicleID 
+From customer, rent
+WHERE customer.CustID=Rent.CustID;
+
+
+/*List the return date of all active and scheduled rented cars*/
+SELECT VehicleID, StartDate, Rent_Option, No_Weeks, No_Days, Deposit, DATE_ADD(StartDate, INTERVAL No_weeks*7+No_Days DAY) as ReturnDate 
+From customer, rent
+WHERE customer.CustID=Rent.CustID
+
+
+/*List the return date of all active and scheduled rented cars with Daily & Weekly Rate*/
+SELECT rent.VehicleID, StartDate, Rent_Option, No_Weeks, No_Days, Deposit, DATE_ADD(StartDate, INTERVAL No_weeks*7+No_Days DAY) as ReturnDate, D_Rate as DailyRate, W_Rate as WeeklyRate
+From customer, rent, car, category
+WHERE customer.CustID=Rent.CustID and rent.VehicleID=car.VehicleID and car.type=category.Type
+
+
+/*Report Projected Earning By_Vehicle_ID with AmountDue per transaction*/
+SELECT rent.VehicleID, StartDate, Rent_Option, No_Weeks, No_Days, Deposit, DATE_ADD(StartDate, INTERVAL No_weeks*7+No_Days DAY) as ReturnDate, D_Rate as DailyRate, W_Rate as WeeklyRate, D_Rate*No_Days+W_Rate*No_Weeks AS Earn_By_Transaction, (D_Rate*No_Days+W_Rate*No_Weeks-Deposit) AS AmountDue
+From customer, rent, car, category
+WHERE customer.CustID=Rent.CustID and rent.VehicleID=car.VehicleID and car.type=category.Type
+

@@ -1,0 +1,5 @@
+'AMAZON','Dallas, TX','469-325-1382',101
+'APPLE','Richardson, TX','469-325-1383',102
+'GOOGLE','Arlington, TX','469-325-1384',103
+'FRYS','Irving, TX','469-325-1386',104
+'WSP','Forth-Worth, TX','469-325-1389',105

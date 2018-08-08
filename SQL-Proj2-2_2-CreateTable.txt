@@ -1,0 +1,132 @@
+Assumption: 
+1. CustomerType as char(1) value: I as Individual, and C as company
+2. OwnerType as char(1) value: C as Rental_Company, B as Bank, and P as Person
+
+drop table individual;
+drop table company;
+drop table Rental_Company;
+drop table Bank;
+drop table Person;
+drop table rent;
+drop table customer;
+drop table Car;
+drop table Owner;
+drop table category;
+
+DROP FUNCTION IF EXISTS LAST_DAY_OF_WEEK;
+DROP FUNCTION IF EXISTS START_DAY_OF_WEEK;
+DROP PROCEDURE IF EXISTS AddCustomer;
+DROP PROCEDURE IF EXISTS AddOwner;
+DROP PROCEDURE IF EXISTS EarnReport_All;
+DROP PROCEDURE IF EXISTS EarnReport_CarUnit;
+DROP PROCEDURE IF EXISTS EarnReport_Owner;
+DROP PROCEDURE IF EXISTS EarnReport_Type;
+
+DROP VIEW IF EXISTS tmpview1;
+DROP VIEW IF EXISTS tmpreport;
+
+
+//Proj2_SQL Part 3.1
+
+CREATE TABLE OWNER
+(
+  OwnerID NUMERIC(3) NOT NULL,
+  OwnerType CHAR(1),
+  PRIMARY KEY (OwnerID)
+);
+
+CREATE TABLE RENTAL_COMPANY
+(
+  RCName VARCHAR(15) NOT NULL,
+  RCAddress VARCHAR(30) NOT NULL,
+  Phone VARCHAR(12),
+  OwnerID NUMERIC(3) NOT NULL,
+  FOREIGN KEY (OwnerID) REFERENCES OWNER(OwnerID),
+  UNIQUE (RCName, RCAddress)
+);
+
+CREATE TABLE BANK
+(
+  BName VARCHAR(15) NOT NULL,
+  BAddress VARCHAR(30) NOT NULL,
+  Phone VARCHAR(12),
+  OwnerID NUMERIC(3) NOT NULL,
+  FOREIGN KEY (OwnerID) REFERENCES OWNER(OwnerID),
+  UNIQUE (BName, BAddress)
+);
+
+CREATE TABLE PERSON
+(
+  SSN NUMERIC(9) NOT NULL,
+  Init CHAR(1) NOT NULL,
+  LName VARCHAR(15) NOT NULL,
+  Phone VARCHAR(12),
+  OwnerID NUMERIC(3) NOT NULL,
+  FOREIGN KEY (OwnerID) REFERENCES OWNER(OwnerID),
+  UNIQUE (SSN)
+);
+
+CREATE TABLE CATEGORY
+(
+  Type VARCHAR(8) NOT NULL,
+  D_Rate NUMERIC(3) NOT NULL,
+  W_Rate NUMERIC(4) NOT NULL,
+  PRIMARY KEY (Type)
+);
+
+CREATE TABLE CUSTOMER
+(
+  CustID INT AUTO_INCREMENT,
+  CustType CHAR(1),
+  PRIMARY KEY (CustID)
+);
+
+CREATE TABLE INDIVIDUAL
+(
+  SSN NUMERIC(9) NOT NULL,
+  Init CHAR(1),
+  LName VARCHAR(15) NOT NULL,
+  Phone VARCHAR(12),
+  CID INT NOT NULL,
+  FOREIGN KEY (CID) REFERENCES CUSTOMER(CustID),
+  UNIQUE (SSN),
+  UNIQUE (CID)
+);
+
+CREATE TABLE COMPANY
+(
+  CName VARCHAR(20) NOT NULL,
+  Phone VARCHAR(12),
+  CID INT NOT NULL,
+  FOREIGN KEY (CID) REFERENCES CUSTOMER(CustID),
+  UNIQUE (CID)
+);
+
+CREATE TABLE CAR
+(
+  VehicleID NUMERIC(4) NOT NULL,
+  Model VARCHAR(15) NOT NULL,
+  Year NUMERIC(4) NOT NULL,
+  Type VARCHAR(8) NOT NULL,
+  OID NUMERIC(3) NOT NULL,
+  PRIMARY KEY (VehicleID),
+  FOREIGN KEY (Type) REFERENCES CATEGORY(Type),
+  FOREIGN KEY (OID) REFERENCES OWNER(OwnerID)
+);
+
+CREATE TABLE RENT
+(
+  StartDate DATE,
+  No_Days NUMERIC(4),
+  No_Weeks NUMERIC(4),
+  Rent_Option VARCHAR(6),
+  Deposit NUMERIC(4),
+  VehicleID NUMERIC(4) NOT NULL,
+  CustID INT NOT NULL,
+  Status CHAR(2),
+  AmountPaid NUMERIC(5),
+  UNIQUE (VehicleID, StartDate),
+  FOREIGN KEY (VehicleID) REFERENCES CAR(VehicleID),
+  FOREIGN KEY (CustID) REFERENCES CUSTOMER(CustID)
+);
+

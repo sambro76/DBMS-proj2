@@ -1,0 +1,170 @@
+3.	Write a query that will prepare a report for weekly earnings by owner, by car type and per car unit that owner owns within that car type:
+
+
+/***************************************/
+/*FUNCTIONS CALL*/
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` FUNCTION `LAST_DAY_OF_WEEK`(day DATE) RETURNS date
+    DETERMINISTIC
+BEGIN
+  RETURN DATE_ADD(SUBDATE(day, WEEKDAY(day)), INTERVAL 7 DAY);
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` FUNCTION `START_DAY_OF_WEEK`(`day` DATE) RETURNS date
+    DETERMINISTIC
+BEGIN
+  RETURN SUBDATE(day, WEEKDAY(day));
+END$$
+DELIMITER ;
+
+/*CREATE VIEW*/
+create view tmpView1 as SELECT car.VehicleID, Type, StartDate, No_Days, No_Weeks, Rent_Option, Deposit, No_weeks*7+No_Days as TotalDays, DATE_ADD(StartDate, INTERVAL No_weeks*7+No_Days DAY) as ReturnDate, OID as OwnerID, Status, AmountPaid FROM (car LEFT JOIN rent on car.VehicleID=rent.VehicleID);
+
+create view tmpReport as 
+SELECT VehicleID, RInfo.Type, StartDate, No_Days, No_Weeks, Rent_Option, Deposit, D_Rate, W_Rate, ReturnDate, IF(CURRENT_DATE<=ReturnDate, CONCAT("on ", DATE_ADD(ReturnDate, INTERVAL 1 DAY)), "Now") AS Availability, OwnerID, WeekOfYear(StartDate) as Start_WeekOfYear, WeekOfYear(ReturnDate) as Return_WeekOfYear, TotalDays, Status, AmountPaid   
+FROM tmpView1 AS RInfo, category
+WHERE RInfo.Type=category.Type
+ORDER BY RInfo.VehicleID;
+
+
+/*WEEKLY REPORT BY OWNER*/
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EarnReport_Owner`(IN `min` INT, IN `max` INT)
+    DETERMINISTIC
+BEGIN
+DECLARE i integer default min;
+SET @sql='';
+SET @sql=CONCAT(@sql, 'select OwnerID, ');
+loopit:loop
+	if i>max then leave loopit; 
+    end if;
+	SET @sql=CONCAT(@sql,'IF(WeekOfYear(StartDate)<', i, ', IF(WeekOfYear(ReturnDate)>',i,', 7, IF(WeekOfYear(ReturnDate)=', i, ', DATEDIFF(ReturnDate, START_DAY_OF_WEEK(ReturnDate)),0 )), IF(WeekOfYear(StartDate)=', i, ', IF(WeekOfYear(ReturnDate)>', i, ', DATEDIFF(LAST_DAY_OF_WEEK(StartDate), StartDate), DATEDIFF(ReturnDate, StartDate) ),0)) * IF(Rent_Option="WEEKLY",w_rate/7,d_rate) as Week', i, ' ' );
+    if i<max then 
+    	SET @sql=CONCAT(@sql,', '); 
+    end if;
+    set i=i+1;
+end loop loopit;
+SET @sql=CONCAT(@sql,' from tmpReport');
+
+set i=min;
+SET @sql2='';
+SET @sql2=CONCAT(@sql2, 'select OwnerID, ');
+loopit2:loop
+	if i>max then leave loopit2; 
+    end if;
+	SET @sql2=CONCAT(@sql2,'sum(week',i,') as Week', i, ' ' );
+    if i<max then 
+    	SET @sql2=CONCAT(@sql2,', '); 
+    end if;
+    set i=i+1;
+end loop loopit2;
+
+SET @sql=CONCAT(@sql2,' from (',@sql,') as tmp group by OwnerID');
+prepare stmt FROM @sql;
+execute stmt;
+deallocate prepare stmt;
+END$$
+DELIMITER ;
+
+
+/*WEEKLY REPORT BY TYPE*/
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EarnReport_Type`(IN `min` INT, IN `max` INT)
+    DETERMINISTIC
+BEGIN
+DECLARE i integer default min;
+SET @sql='';
+SET @sql=CONCAT(@sql, 'select Type, ');
+loopit:loop
+	if i>max then leave loopit; 
+    end if;
+	SET @sql=CONCAT(@sql,'IF(WeekOfYear(StartDate)<', i, ', IF(WeekOfYear(ReturnDate)>',i,', 7, IF(WeekOfYear(ReturnDate)=', i, ', DATEDIFF(ReturnDate, START_DAY_OF_WEEK(ReturnDate)),0 )), IF(WeekOfYear(StartDate)=', i, ', IF(WeekOfYear(ReturnDate)>', i, ', DATEDIFF(LAST_DAY_OF_WEEK(StartDate), StartDate), DATEDIFF(ReturnDate, StartDate) ),0)) * IF(Rent_Option="WEEKLY",w_rate/7,d_rate) as Week', i, ' ' );
+    if i<max then 
+    	SET @sql=CONCAT(@sql,', '); 
+    end if;
+    set i=i+1;
+end loop loopit;
+SET @sql=CONCAT(@sql,' from tmpReport');
+
+set i=min;
+SET @sql2='';
+SET @sql2=CONCAT(@sql2, 'select Type, ');
+loopit2:loop
+	if i>max then leave loopit2; 
+    end if;
+	SET @sql2=CONCAT(@sql2,'sum(week',i,') as Week', i, ' ' );
+    if i<max then 
+    	SET @sql2=CONCAT(@sql2,', '); 
+    end if;
+    set i=i+1;
+end loop loopit2;
+
+SET @sql=CONCAT(@sql2,' from (',@sql,') as tmp group by Type');
+prepare stmt FROM @sql;
+execute stmt;
+deallocate prepare stmt;
+END$$
+DELIMITER ;
+
+
+
+/*WEEKLY REPORT BY CAR_UNIT that owner owns*/
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EarnReport_CarUnit`(IN `min` INT, IN `max` INT)
+    DETERMINISTIC
+BEGIN
+DECLARE i integer default min;
+SET @sql='';
+SET @sql=CONCAT(@sql, 'select VehicleID,Type,OwnerID, ');
+loopit:loop
+	if i>max then leave loopit; 
+    end if;
+	SET @sql=CONCAT(@sql,'SUM( IF(WeekOfYear(StartDate)<', i, ', IF(WeekOfYear(ReturnDate)>',i,', 7, IF(WeekOfYear(ReturnDate)=', i, ', DATEDIFF(ReturnDate, START_DAY_OF_WEEK(ReturnDate)),0 )), IF(WeekOfYear(StartDate)=', i, ', IF(WeekOfYear(ReturnDate)>', i, ', DATEDIFF(LAST_DAY_OF_WEEK(StartDate), StartDate), DATEDIFF(ReturnDate, StartDate) ),0)) * IF(Rent_Option="WEEKLY",w_rate/7,d_rate) ) as Week', i, ' ' );
+    if i<max then 
+    	SET @sql=CONCAT(@sql,', '); 
+    end if;
+    set i=i+1;
+end loop loopit;
+
+SET @sql=CONCAT(@sql,' from tmpReport GROUP BY VehicleID');
+prepare stmt FROM @sql;
+execute stmt;
+deallocate prepare stmt;
+END$$
+DELIMITER ;
+
+
+/*WEEKLY REPORT OF ALL TRANSACTIONS Per Car Unit*/
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EarnReport_All`(IN `min` INT, IN `max` INT)
+    DETERMINISTIC
+BEGIN
+DECLARE i integer default min;
+SET @sql='';
+SET @sql=CONCAT(@sql, 'select *, ');
+loopit:loop
+	if i>max then leave loopit; 
+    end if;
+	SET @sql=CONCAT(@sql,'IF(WeekOfYear(StartDate)<', i, ', IF(WeekOfYear(ReturnDate)>',i,', 7, IF(WeekOfYear(ReturnDate)=', i, ', DATEDIFF(ReturnDate, START_DAY_OF_WEEK(ReturnDate)),0 )), IF(WeekOfYear(StartDate)=', i, ', IF(WeekOfYear(ReturnDate)>', i, ', DATEDIFF(LAST_DAY_OF_WEEK(StartDate), StartDate), DATEDIFF(ReturnDate, StartDate) ),0)) * IF(Rent_Option="WEEKLY",w_rate/7,d_rate) as Week', i, ' ' );
+    if i<max then 
+    	SET @sql=CONCAT(@sql,', '); 
+    end if;
+    set i=i+1;
+end loop loopit;
+
+SET @sql=CONCAT(@sql,' from tmpReport');
+prepare stmt FROM @sql;
+execute stmt;
+deallocate prepare stmt;
+END$$
+DELIMITER ;
+
+
+
+CALL EarnReport_Owner(11,20);
+CALL EarnReport_Type(11,20);
+CALL EarnReport_CarUnit(11,20);
+CALL EarnReport_All(11,20);
