@@ -1,0 +1,200 @@
+﻿<html>
+    <head>
+        <title>CAR RENTAL COMPANY </title>    
+    	<style type="text/css">
+		.auto-style1 {
+			border-width: 0;
+		}
+		.auto-style2 {
+			text-align: right;
+		}
+		</style>
+    </head>
+    <body>
+		<div class="menu">
+  			<span class="auto-style2">
+  			<a href="index.html">Home</a>&nbsp; |&nbsp;
+  			<a href="AddCustomer.html">Add/View Customer</a>&nbsp; |&nbsp; 
+  			<a href="AddCar.html">Add/View Car/Owner</a>&nbsp; |&nbsp;
+			<a href="Reservation.php">Reservation</a>&nbsp; |&nbsp;
+			<a href="return.html">Car Return</a>&nbsp; |&nbsp;
+			<a href="weeklyReport.php">Weekly Report</a></span>
+			</div>
+			
+	<div class="leftContent">
+	
+    <form action="addCar.php" method="post">
+	<h2>Please complete the following to add car information: </h2>
+		<br>
+		<table cellpadding="0" cellspacing="0" class="auto-style1">
+			<tr>
+				<td class="auto-style2" style="height: 24px">Vehicle ID:</td>
+				<td style="height: 24px"> <input type="text" name="vid"></td>
+				<td style="width: 359px">(4-digit number from 1001-9999)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 24px">Model:</td>
+				<td style="height: 24px"> <input type="text" name="model"></td>
+				<td style="height: 24px; width: 359px">(e.g. Ford, Honda, 
+				Hyundai, ..., etc.)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Year:</td>
+				<td> <input type="text" name="year" style="width: 79px"></td>
+				<td style="width: 359px">(4-digit year)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Type:</td>
+				<td> 
+					<select name = "type">
+					<option>COMPACT</option>
+					<option>MEDIUM</option>
+					<option>LARGE</option>
+					<option>SUV</option>
+					<option>VAN</option>
+					<option>TRUCK</option>
+					</select></td>
+				<td style="width: 359px">(select car type)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Owner ID:</td>
+				<td> <input type="text" name="oid"></td>
+				<td style="width: 359px">(3-digit owner id)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">&nbsp;</td>
+				<td>
+				&nbsp;</td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">&nbsp;</td>
+				<td>
+<input type="submit" name="submit" value="Add Car"></td>
+				<td style="width: 359px" class="auto-style2">&nbsp;</td>
+			</tr>
+		</table>
+&nbsp;<br></form>
+    </div>	
+	<div class="rightContent">
+	<form action="listCars.php" method="post" >
+	<h3>To view existing car, please click:
+	<input type="submit" value="Here"> 
+	</h3>
+	</form>	
+	</div>
+
+	<div class="rightContent">
+	<form action="listOwner.php" method="post" >
+	<h3>To find the existing owner, please click:
+	<input type="submit" value="Here"> 
+	</h3>
+	</form>	
+	</div>
+
+	<div class="rightContent">
+	<form name="form2" action="addOwner.php" method="post" >
+	<h3>Or, complete the following form to add new owner:</h3>
+		<table cellpadding="0" cellspacing="0" class="auto-style1">
+			<tr>
+				<td class="auto-style2">Owner type:</td>
+				<td><select name = "ownerType">
+					<option value="P" selected="">Person</option>
+					<option value="B">Bank</option>
+					<option value="C">Rental_Company</option>
+					</select></td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 24px">SSN:</td>
+				<td style="height: 24px"> <input type="text" name="ssn"></td>
+				<td style="height: 24px; width: 359px">For person type only: 
+				input whole 9 digits without dash</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">First initial:</td>
+				<td> <input type="text" name="init" style="width: 38px"></td>
+				<td style="width: 359px">For person type only: input first 
+				letter of First Name</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Name:</td>
+				<td> <input type="text" name="name"></td>
+				<td style="width: 359px">(Last name for person)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Address:</td>
+				<td> <input type="text" name="address"></td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 22px">Phone:</td>
+				<td style="height: 22px"><input type="text" name="phone"></td>
+				<td style="width: 359px; height: 22px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 22px">Owner ID:</td>
+				<td style="height: 22px"><input type="text" name="ownerID"></td>
+				<td style="width: 359px; height: 22px;">(Input new 3-digit owner id)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 22px">&nbsp;</td>
+				<td style="height: 22px">
+					&nbsp;</td>
+				<td style="width: 359px; height: 22px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 22px">&nbsp;</td>
+				<td style="height: 22px">
+					<input type="submit" value="Add Owner" style="width: 90px"></td>
+				<td style="width: 359px; height: 22px;">&nbsp;</td>
+			</tr>
+		</table>
+	</form>	
+	</div>
+
+	<form name="form3" action="updateRate.php" method="post" >
+		<h4>
+		*********************************************************************</h4>
+		<h4>Enter or update the rental rates (daily and weekly) for a type of car:</h4>
+		<table cellpadding="0" cellspacing="0" class="auto-style1">
+			<tr>
+				<td class="auto-style2" style="height: 24px">Daily Rate:</td>
+				<td style="height: 24px"> 
+				<input type="text" name="d_rate" style="width: 75px"></td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 24px">Weekly Rate:</td>
+				<td style="height: 24px"> 
+				<input type="text" name="w_rate" style="width: 75px"></td>
+				<td style="height: 24px; width: 359px">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Type:</td>
+				<td> 
+					<select name = "type">
+						<option>COMPACT</option>
+						<option>MEDIUM</option>
+						<option>LARGE</option>
+						<option>SUV</option>
+						<option>VAN</option>
+						<option>TRUCK</option>
+					</select></td>
+				<td style="width: 359px">(select car type to update the rate)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">&nbsp;</td>
+				<td> &nbsp;</td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">&nbsp;</td>
+				<td>
+					<input type="submit" name="submit3" value="Update Rate"></td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

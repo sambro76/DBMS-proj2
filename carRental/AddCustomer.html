@@ -1,0 +1,82 @@
+﻿<html>
+    <head>
+        <title>CAR RENTAL COMPANY </title>    
+    	<style type="text/css">
+		.auto-style1 {
+			border-width: 0;
+		}
+		.auto-style2 {
+			text-align: right;
+		}
+		</style>
+    </head>
+    <body>
+		<div class="menu">
+  			<span class="auto-style2">
+  			<a href="index.html">Home</a>&nbsp; |&nbsp;
+  			<a href="AddCustomer.html">Add/View Customer</a>&nbsp; |&nbsp; 
+  			<a href="AddCar.html">Add/View Car/Owner</a>&nbsp; |&nbsp;
+			<a href="Reservation.php">Reservation</a>&nbsp; |&nbsp;
+			<a href="return.html">Car Return</a>&nbsp; |&nbsp;
+			<a href="weeklyReport.php">Weekly Report</a></span>
+			</div>
+			
+	<div class="leftContent">
+	
+    <form action="addCustomer.php" method="post">
+	<h2>Please complete the following to add new customer: </h2>
+		<p>&nbsp;</p>
+		<table cellpadding="0" cellspacing="0" class="auto-style1">
+			<tr>
+				<td class="auto-style2">Customer Type:</td>
+				<td style="width: 144px"><select name = "custType">
+<option value="I">Individual</option>
+<option value="C">Company</option>
+</select></td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 24px">SSN:</td>
+				<td style="height: 24px; width: 144px;"> <input type="text" name="ssn"></td>
+				<td style="height: 24px; width: 359px">For individual type only: 
+				input whole 9 digits</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">First Initial:</td>
+				<td style="width: 144px"> <input type="text" name="init" style="width: 38px"></td>
+				<td style="width: 359px">For individual type only: input first 
+				initial of First Name</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Last Name:</td>
+				<td style="width: 144px"> <input type="text" name="lname"></td>
+				<td style="width: 359px">For individual type only</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Phone:</td>
+				<td style="width: 144px"> <input type="text" name="phone"></td>
+				<td style="width: 359px">???-???-????</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 22px">Company Name:</td>
+				<td style="height: 22px; width: 144px;"><input type="text" name="cname"></td>
+				<td style="width: 359px; height: 22px;">For company type 
+				only</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">&nbsp;</td>
+				<td style="width: 144px">
+<input type="submit" name="submit" value="Add Customer"></td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+		</table>
+&nbsp;</form>
+    </div>	
+	<div class="rightContent">
+	<form action="listCustomer.php" method="post" >
+	<h2>List existing customers:
+	<input type="submit" value="Here"></h2>
+	&nbsp;</form>	
+	</div>
+	</body>
+	</html>

@@ -1,0 +1,56 @@
+﻿<html>
+    <head>
+        <title>CAR RENTAL COMPANY </title>    
+    	<style type="text/css">
+		.auto-style1 {
+			border-width: 0;
+		}
+		.auto-style2 {
+			text-align: right;
+		}
+		</style>
+    </head>
+    <body>
+		<div class="menu">
+  			<span class="auto-style2">
+  			<a href="index.html">Home</a>&nbsp; |&nbsp;
+  			<a href="AddCustomer.html">Add/View Customer</a>&nbsp; |&nbsp; 
+  			<a href="AddCar.html">Add/View Car/Owner</a>&nbsp; |&nbsp;
+			<a href="Reservation.php">Reservation</a>&nbsp; |&nbsp;
+			<a href="return.html">Car Return</a>&nbsp; |&nbsp;
+			<a href="weeklyReport.php">Weekly Report</a></span>
+			</div>
+			
+	<div class="leftContent">
+	
+    <form action="searchRental.php" method="post">
+	<h2>Car Return</h2>
+		<h2>Input the following to search for the rented car: </h2>
+		<p>&nbsp;</p>
+		<table cellpadding="0" cellspacing="0" class="auto-style1">
+			<tr>
+				<td class="auto-style2" style="height: 24px">Vehicle ID:</td>
+				<td> <input type="text" name="vehicleID"></td>
+				<td style="width: 359px">(4-digit number from 1001-9999)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">Start Date: </td>
+				<td style="height: 24px"> <input type="text" name="startDate"></td>
+				<td style="height: 24px; width: 359px">(YYYY-MM-DD)</td>
+			</tr>
+			<tr>
+				<td class="auto-style2" style="height: 22px">&nbsp;</td>
+				<td style="height: 22px">&nbsp;</td>
+				<td style="width: 359px; height: 22px;">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="auto-style2">&nbsp;</td>
+				<td>
+<input type="submit" name="submit" value="Search"></td>
+				<td style="width: 359px">&nbsp;</td>
+			</tr>
+		</table>
+&nbsp;</form>
+    </div>
+	</body>
+	</html>
